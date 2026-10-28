@@ -21,7 +21,7 @@ npm run lint
 
 豆瓣 → 当当 → Google Books → Open Library，依次尝试，命中率优先中文书。查到之后把图片下载进 IndexedDB（Blob），之后渲染的是 `blob:` 地址，不依赖外网。
 
-豆瓣与当当都没有公开 API 且不允许跨域，所以浏览器不能直连，仓库里带了两套代理，同一份逻辑（`server/coverSources.mjs`、`server/coverApi.mjs`）：
+豆瓣与当当都没有公开 API 且不允许跨域，所以浏览器不能直连。仓库里带了两套服务端入口，共用同一份逻辑（`server/coverSources.mjs`、`server/coverApi.mjs`）：
 
 - `GET /api/covers?title=&author=` —— 检索并返回封面地址（附 base64 图）
 - `GET /api/cover-image?url=` —— 按已记录的地址下载封面（白名单 + 防盗链 Referer），用于导入备份后回填
@@ -30,19 +30,24 @@ npm run lint
 
 ## 部署
 
-### Cloudflare Pages（静态 + Functions）
+### Cloudflare Workers（静态资源 + 接口）
+
+`dist/` 作为静态资源托管，`worker/index.js` 处理 `/api/*`，配置见 `wrangler.toml`。
+
+在 Cloudflare 控制台用 Git 集成建项目时按下面填：
 
 | 配置项 | 值 |
 | --- | --- |
-| 构建命令 | `npm run build` |
-| 输出目录 | `dist` |
-| Functions | 仓库根的 `functions/`，自动识别 |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Path | `/` |
+| 环境变量 | `NODE_VERSION` = `20` |
 
-`public/_redirects` 负责子路由回退，`wrangler.toml` 里声明了输出目录。也可以在本地直接推：
+也可以在本地直接发：
 
 ```bash
 npx wrangler login
-npm run cf:deploy
+npm run deploy
 ```
 
 ### 自建 Node 服务

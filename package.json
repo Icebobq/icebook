@@ -9,8 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "serve": "node server/serve.mjs",
-    "cf:dev": "npm run build && wrangler pages dev dist",
-    "cf:deploy": "npm run build && wrangler pages deploy dist"
+    "worker:dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@fontsource/libre-caslon-text": "^5.3.0",

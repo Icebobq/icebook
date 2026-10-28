@@ -1,4 +1,10 @@
-# Cloudflare Pages 配置：构建产物在 dist/，API 在 functions/
+# Cloudflare Workers + 静态资源：构建产物 dist/ 当静态站，worker/ 处理 /api/*
 name = "icebook"
-compatibility_date = "2024-09-23"
-pages_build_output_dir = "dist"
+main = "worker/index.js"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# 单页应用：找不到的路径一律回 index.html，取代 Pages 的 _redirects 写法
+not_found_handling = "single-page-application"
