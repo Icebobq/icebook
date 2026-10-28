@@ -23,6 +23,9 @@ import {
 import { downloadCoverImage, lookupCover, toBlob, type CoverImage } from '../data/covers'
 import { useI18n } from '../i18n'
 
+/** 内置示例书籍的 id 集合，用来判断书柜是不是还没被用户动过 */
+const DEMO_IDS = new Set(seedBooks.map((book) => book.id))
+
 export interface NewBookInput {
   title: string
   author: string
@@ -88,6 +91,8 @@ interface LibraryValue {
   exportSnapshot: () => LibrarySnapshot
   importSnapshot: (raw: string) => Promise<{ books: number; notes: number }>
   clearLibrary: () => Promise<void>
+  /** 书柜里是否仍是内置的示例数据，用来提示“这些不是你的书” */
+  isDemo: boolean
   /** 批量向公开书库查询封面，失败的书记下日期后回落到合成书脊 */
   syncCovers: () => Promise<{ found: number; total: number }>
   /** 封面实际可用的地址：优先本地缓存的 Blob，其次原始外链 */
@@ -524,6 +529,8 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     [coverUrls, proxyState],
   )
 
+  const isDemo = books.length > 0 && books.length === DEMO_IDS.size && books.every((b) => DEMO_IDS.has(b.id))
+
   const value = useMemo(
     () => ({
       books,
@@ -543,6 +550,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       exportSnapshot,
       importSnapshot,
       clearLibrary,
+      isDemo,
       syncCovers,
       coverSrc,
       cacheCover,
@@ -565,6 +573,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       exportSnapshot,
       importSnapshot,
       clearLibrary,
+      isDemo,
       syncCovers,
       coverSrc,
       cacheCover,

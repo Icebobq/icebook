@@ -14,7 +14,7 @@ type ViewMode = 'shelf' | 'list'
 const statusOrder = ['unread', 'reading', 'finished', 'paused'] as const
 
 export function ShelfPage() {
-  const { books, deleteBook } = useLibrary()
+  const { books, deleteBook, clearLibrary, isDemo } = useLibrary()
   const { t, lang, categoryName } = useI18n()
   const [keyword, setKeyword] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -23,6 +23,8 @@ export function ShelfPage() {
   const [menuBook, setMenuBook] = useState<Book | null>(null)
   const [editingBook, setEditingBook] = useState<Book | null>(null)
   const [pendingDelete, setPendingDelete] = useState<Book | null>(null)
+  const [demoHidden, setDemoHidden] = useState(false)
+  const [demoConfirm, setDemoConfirm] = useState(false)
 
   const filtered = useMemo(() => {
     const k = keyword.trim().toLowerCase()
@@ -166,6 +168,30 @@ export function ShelfPage() {
           </div>
         </div>
 
+        {isDemo && !demoHidden && (
+          <div className="flex flex-wrap items-center gap-3 rounded-[16px] border border-gold-deep/25 bg-gold-soft/40 px-3.5 py-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-ink">{t('shelf.demoTitle')}</p>
+              <p className="mt-0.5 text-[11px] leading-5 text-ink-2">{t('shelf.demoBody')}</p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <button
+                onClick={() => setDemoConfirm(true)}
+                className="h-8 rounded-full bg-ink px-3.5 text-[11px] font-medium text-[#fdf6ea] transition hover:bg-[#3b241a]"
+              >
+                {t('shelf.demoClear')}
+              </button>
+              <button
+                onClick={() => setDemoHidden(true)}
+                aria-label={t('shelf.demoDismiss')}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-surface hover:text-ink"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
         <div
           role="group"
           aria-label={t('shelf.filterGroup')}
@@ -263,6 +289,18 @@ export function ShelfPage() {
         onDelete={(book) => {
           setMenuBook(null)
           setPendingDelete(book)
+        }}
+      />
+
+      <ConfirmDialog
+        open={demoConfirm}
+        title={t('shelf.demoClearTitle')}
+        description={t('shelf.demoClearBody')}
+        confirmText={t('shelf.demoClear')}
+        onCancel={() => setDemoConfirm(false)}
+        onConfirm={() => {
+          setDemoConfirm(false)
+          void clearLibrary()
         }}
       />
 

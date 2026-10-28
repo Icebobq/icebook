@@ -60,6 +60,14 @@ export const en: Record<DictKey, string> = {
   'shelf.noMatchTitle': 'No matching books',
   'shelf.noMatchBody': 'Try another keyword, or add this book to your shelf.',
   'shelf.hint': 'Long-press or right-click a spine to edit or delete it',
+  'shelf.demoTitle': 'These are sample books',
+  'shelf.demoBody':
+    'They are here to show how spines, categories and stats look — not your own collection. Clear them to start your shelf.',
+  'shelf.demoClear': 'Clear samples',
+  'shelf.demoClearTitle': 'Clear the sample shelf?',
+  'shelf.demoClearBody':
+    'The sample books and their notes will be removed and the shelf becomes empty. If you have a backup file, import it from "Data".',
+  'shelf.demoDismiss': 'Keep this notice for now',
   'shelf.layerEmpty': 'This shelf is empty',
   'shelf.deleteTitle': 'Delete “{title}”?',
   'shelf.deleteBody':
