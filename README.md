@@ -1,32 +1,63 @@
-# React + TypeScript + Vite
+# Icebook
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+个人书库：把书架搬进浏览器。书脊按分类立在层板上，可以记购入价、翻看次数，写观后感与喜欢的句子，最后看年度阅读与花费。
 
-Currently, two official plugins are available:
+数据全部存在浏览器 IndexedDB 里，没有账号、没有云端，导出 JSON 就是完整备份。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 技术栈
 
-## React Compiler
+React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router · IndexedDB
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 本地开发
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev     # http://localhost:5173
+npm run build
+npm run lint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 封面从哪来
+
+豆瓣 → 当当 → Google Books → Open Library，依次尝试，命中率优先中文书。查到之后把图片下载进 IndexedDB（Blob），之后渲染的是 `blob:` 地址，不依赖外网。
+
+豆瓣与当当都没有公开 API 且不允许跨域，所以浏览器不能直连，仓库里带了两套代理，同一份逻辑（`server/coverSources.mjs`、`server/coverApi.mjs`）：
+
+- `GET /api/covers?title=&author=` —— 检索并返回封面地址（附 base64 图）
+- `GET /api/cover-image?url=` —— 按已记录的地址下载封面（白名单 + 防盗链 Referer），用于导入备份后回填
+
+查不到就退回按书名生成的合成书脊，不会贴错封面。
+
+## 部署
+
+### Cloudflare Pages（静态 + Functions）
+
+| 配置项 | 值 |
+| --- | --- |
+| 构建命令 | `npm run build` |
+| 输出目录 | `dist` |
+| Functions | 仓库根的 `functions/`，自动识别 |
+
+`public/_redirects` 负责子路由回退，`wrangler.toml` 里声明了输出目录。也可以在本地直接推：
+
+```bash
+npx wrangler login
+npm run cf:deploy
+```
+
+### 自建 Node 服务
+
+```bash
+npm run build
+npm run serve   # 默认 4173，PORT 可改；静态托管 + 两个 API + SPA 回退
+```
+
+### 纯静态托管
+
+上传 `dist` 即可，但没有 `/api/*`：中文封面会退回 Google Books / Open Library，命中率明显下降。
+
+## 数据与隐私
+
+- 每个浏览器、每个域名各存一份书柜；换域名或清站点数据前，先在「设置」里导出 JSON。
+- 换设备请用导出 / 导入，当前没有账号体系与多端同步。
+- 封面检索是公开接口，已按 IP 限流，请不要拿去批量抓取第三方站点。
