@@ -41,7 +41,7 @@ npm run lint
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
 | Path | `/` |
-| 环境变量 | `NODE_VERSION` = `20` |
+| 环境变量 | `NODE_VERSION` = `22`（`.nvmrc` 已声明，可不填） |
 
 也可以在本地直接发：
 
