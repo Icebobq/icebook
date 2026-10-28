@@ -1,0 +1,9 @@
+# 单页应用回退：直接输入子路由时返回首页那份 index.html（200 内部重写，地址栏不变）
+#
+# 不用 `/* → /` 的通配：它会把 /assets/*.js|css 也重写成 HTML，浏览器因 MIME 拒绝执行，页面全白。
+# 目的地也不写 /index.html：Cloudflare 会把 `.html`、`/index` 规范化成 `/`，那会变成 308 跳转并丢掉路径。
+# /api/* 由 functions/ 处理，优先于本规则。
+/books  /  200
+/books/*  /  200
+/notes  /  200
+/stats  /  200

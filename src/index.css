@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  /* 参考图的奶油暖调：纸底、暖金、深咖啡墨色 */
+  --color-paper: #f6eedf;
+  --color-paper-2: #f1e5d1;
+  --color-paper-3: #e9dac2;
+  --color-surface: #fcf7ee;
+  --color-ink: #2c1810;
+  --color-ink-2: #6b5844;
+  --color-ink-3: #9c8b78;
+  --color-gold: #daaa63;
+  --color-gold-deep: #b8874a;
+  --color-gold-soft: #f2e0c2;
+  --color-line: #e9dbc5;
+
+  --font-display: "Libre Caslon Text", "Songti SC", "Noto Serif SC", "SimSun", serif;
+  --font-sans-cn: "Montserrat", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui,
+    sans-serif;
+
+  --radius-book: 3px;
+}
+
+@layer base {
+  :root {
+    /* 封面书脊上的压暗蒙层：封面明暗不可控，用它把竖排书名的对比度固定住
+       0.62 的强度保证最坏情况（纯白封面）下奶油色书名仍有 5.3:1 的对比 */
+    --spine-scrim: rgba(22, 13, 8, 0.62);
+    --spine-scrim-strong: rgba(22, 13, 8, 0.74);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans-cn);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  /* 极淡的暖光，避免大面积纸色显得发闷 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle at 18% 4%, rgba(218, 170, 99, 0.16), transparent 42%),
+      radial-gradient(circle at 88% 62%, rgba(184, 135, 74, 0.1), transparent 38%);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-gold-soft);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 横向滚动区的边缘淡出：用遮罩裁切内容本身，而不是压一层渐变把按钮“蒙灰” */
+  .fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 16px,
+      #000 calc(100% - 20px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 16px,
+      #000 calc(100% - 20px),
+      transparent 100%
+    );
+  }
+  @media (min-width: 640px) {
+    .fade-x {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
+
+  .spine-text {
+    writing-mode: vertical-rl;
+    /* 汉字直立，西文整体旋转，避免字母逐字堆叠 */
+    text-orientation: mixed;
+    letter-spacing: 0.14em;
+  }
+
+  /* 卡片：surface 底、大圆角、柔和投影，不用硬边框 */
+  .card-soft {
+    background-color: var(--color-surface);
+    box-shadow: 0 10px 30px -18px rgba(44, 24, 16, 0.35);
+  }
+
+  /* 细长层板 + 柔和投影，浅奶油色 */
+  .shelf-ledge {
+    background-image: linear-gradient(180deg, #f7e8cf 0%, #eddcc0 42%, #e2cead 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      0 14px 22px -16px rgba(76, 49, 28, 0.55);
+  }
+
+  /* 层板下方的柔影，把书托起来 */
+  .shelf-glow {
+    background-image: radial-gradient(
+      120% 100% at 50% 0%,
+      rgba(184, 135, 74, 0.13) 0%,
+      rgba(246, 238, 223, 0) 72%
+    );
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* 书脊高度：小屏按比例收敛，桌面恢复原高 */
+  .spine-book {
+    height: calc(var(--spine-h, 180px) * 0.84);
+  }
+  @media (min-width: 640px) {
+    .spine-book {
+      height: var(--spine-h, 180px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

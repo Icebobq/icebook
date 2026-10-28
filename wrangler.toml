@@ -1,0 +1,4 @@
+# Cloudflare Pages 配置：构建产物在 dist/，API 在 functions/
+name = "icebook"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
