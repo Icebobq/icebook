@@ -138,7 +138,6 @@ export const en: Record<DictKey, string> = {
   'note.unfavorite': 'Remove from favourites',
   'note.editAria': 'Edit this entry',
   'note.deleteAria': 'Delete this entry',
-  'note.editShort': 'Edit',
   'note.bookOpen': '“',
   'note.bookClose': '”',
   'note.unknownBook': 'Unknown book',

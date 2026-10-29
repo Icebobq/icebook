@@ -131,7 +131,6 @@ export const zh = {
   'note.unfavorite': '取消喜欢',
   'note.editAria': '编辑这条记录',
   'note.deleteAria': '删除这条记录',
-  'note.editShort': '编辑',
   'note.bookOpen': '《',
   'note.bookClose': '》',
   'note.unknownBook': '未知书目',

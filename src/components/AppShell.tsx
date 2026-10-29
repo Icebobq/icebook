@@ -69,7 +69,7 @@ export function AppShell() {
   const year = CURRENT_YEAR
 
   return (
-    <div className="relative min-h-dvh">
+    <div className="relative flex min-h-dvh flex-col">
       <header className="sticky top-0 z-30">
         <div className="border-b border-line/60 bg-paper/82 backdrop-blur-lg">
           <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-[76px] sm:px-8">
@@ -120,7 +120,7 @@ export function AppShell() {
         </div>
       )}
 
-      <main className="mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-8 sm:pt-10 sm:pb-16">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-12 sm:px-8 sm:pt-10 sm:pb-16">
         <Outlet />
       </main>
 

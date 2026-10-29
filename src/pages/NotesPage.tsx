@@ -78,7 +78,8 @@ export function NotesPage() {
           <p className="mt-2 text-xs text-ink-3">{t('notes.emptyBody')}</p>
         </div>
       ) : (
-        <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 用 grid 而不是多列布局：columns 会按列切口截断卡片，连投影一起裁掉 */}
           {visible.map((note) => (
             <NoteCard
               key={note.id}
@@ -87,7 +88,6 @@ export function NotesPage() {
               showBook
               onEdit={setEditing}
               onDelete={setPendingDelete}
-              className="mb-4 break-inside-avoid"
             />
           ))}
         </div>

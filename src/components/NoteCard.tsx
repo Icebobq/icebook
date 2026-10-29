@@ -15,14 +15,12 @@ export function NoteCard({
   showBook = false,
   onEdit,
   onDelete,
-  className = '',
 }: {
   note: Note
   book?: Book
   showBook?: boolean
   onEdit: (note: Note) => void
   onDelete: (note: Note) => void
-  className?: string
 }) {
   const { t, noteTypeLabel } = useI18n()
   const { toggleFavorite } = useLibrary()
@@ -30,7 +28,7 @@ export function NoteCard({
 
   return (
     <article
-      className={`card-soft group/note rounded-[20px] p-4 transition-shadow duration-300 hover:shadow-[0_16px_34px_-20px_rgba(44,24,16,0.45)] sm:p-5 ${className}`}
+      className="card-soft group/note rounded-[20px] p-4 transition-shadow duration-300 hover:shadow-[0_16px_34px_-20px_rgba(44,24,16,0.45)] sm:p-5"
     >
       <div className="mb-2.5 flex items-center gap-2">
         <span className={`rounded-full px-2.5 py-0.5 text-[10px] ${noteTypeTone[note.type]}`}>
@@ -56,9 +54,16 @@ export function NoteCard({
           <button
             onClick={() => onEdit(note)}
             aria-label={t('note.editAria')}
-            className="grid size-7 place-items-center rounded-full px-1 text-[11px] text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
+            className="grid size-7 place-items-center rounded-full text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
           >
-            {t('note.editShort')}
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
+              <path
+                d="M11.1 2.6l2.3 2.3-7.9 7.9-3 .7.7-3 7.9-7.9z"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
           <button
             onClick={() => onDelete(note)}
