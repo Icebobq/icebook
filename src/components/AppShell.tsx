@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { NavLink, Outlet, useLocation, useNavigationType } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { useLibrary } from '../store/library'
 import { LangSwitch } from './LangSwitch'
@@ -67,6 +68,13 @@ export function AppShell() {
   const { storage, storageError } = useLibrary()
   const { t } = useI18n()
   const year = CURRENT_YEAR
+  const { pathname } = useLocation()
+  const navigationType = useNavigationType()
+
+  // 换页从顶部开始；后退/前进（POP）保留浏览器恢复的滚动位置
+  useEffect(() => {
+    if (navigationType !== 'POP') window.scrollTo(0, 0)
+  }, [pathname, navigationType])
 
   return (
     <div className="relative flex min-h-dvh flex-col">
