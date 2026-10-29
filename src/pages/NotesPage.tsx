@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { NoteCard } from '../components/NoteCard'
 import { NoteDialog } from '../components/NoteDialog'
@@ -9,6 +9,30 @@ import { useLibrary } from '../store/library'
 const typeFilterIds = ['all', 'quote', 'review', 'note'] as const
 
 type FilterId = (typeof typeFilterIds)[number]
+
+/** 列数跟随断点：<640 一列，<1024 两列，再往上三列 */
+function useColumnCount() {
+  const [count, setCount] = useState(() =>
+    window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1,
+  )
+
+  useEffect(() => {
+    const sm = window.matchMedia('(min-width: 640px)')
+    const lg = window.matchMedia('(min-width: 1024px)')
+    const update = () => setCount(lg.matches ? 3 : sm.matches ? 2 : 1)
+    sm.addEventListener('change', update)
+    lg.addEventListener('change', update)
+    return () => {
+      sm.removeEventListener('change', update)
+      lg.removeEventListener('change', update)
+    }
+  }, [])
+
+  return count
+}
+
+/** 粗估卡片高度：句子类字号更大，按字数折算 */
+const noteWeight = (note: Note) => (note.type === 'quote' ? note.content.length * 1.5 : note.content.length)
 
 export function NotesPage() {
   const { notes, books, deleteNote } = useLibrary()
@@ -34,6 +58,21 @@ export function NotesPage() {
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     [notes, type, onlyFavorite],
   )
+
+  const columnCount = useColumnCount()
+
+  // 自己分列做错落布局：CSS columns 会把卡片按列切口截断、连投影一起裁掉
+  const columns = useMemo(() => {
+    const buckets: Note[][] = Array.from({ length: columnCount }, () => [])
+    const heights = new Array<number>(columnCount).fill(0)
+    for (const note of visible) {
+      let target = 0
+      for (let i = 1; i < columnCount; i += 1) if (heights[i] < heights[target]) target = i
+      buckets[target].push(note)
+      heights[target] += noteWeight(note) + 48
+    }
+    return buckets
+  }, [visible, columnCount])
 
   const bookOf = (id: string) => books.find((b) => b.id === id)
 
@@ -78,17 +117,20 @@ export function NotesPage() {
           <p className="mt-2 text-xs text-ink-3">{t('notes.emptyBody')}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {/* 用 grid 而不是多列布局：columns 会按列切口截断卡片，连投影一起裁掉 */}
-          {visible.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              book={bookOf(note.bookId)}
-              showBook
-              onEdit={setEditing}
-              onDelete={setPendingDelete}
-            />
+        <div className="flex items-start gap-4">
+          {columns.map((column, index) => (
+            <div key={index} className="flex min-w-0 flex-1 flex-col gap-4">
+              {column.map((note) => (
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  book={bookOf(note.bookId)}
+                  showBook
+                  onEdit={setEditing}
+                  onDelete={setPendingDelete}
+                />
+              ))}
+            </div>
           ))}
         </div>
       )}

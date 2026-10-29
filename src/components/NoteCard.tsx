@@ -56,11 +56,11 @@ export function NoteCard({
             aria-label={t('note.editAria')}
             className="grid size-7 place-items-center rounded-full text-ink-3 transition-colors hover:bg-paper-2 hover:text-ink"
           >
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
               <path
-                d="M11.1 2.6l2.3 2.3-7.9 7.9-3 .7.7-3 7.9-7.9z"
+                d="M10.7 2.5l2.8 2.8-7.7 7.7-3.6.8.8-3.6 7.7-7.7z"
                 stroke="currentColor"
-                strokeWidth="1.3"
+                strokeWidth="1.5"
                 strokeLinejoin="round"
               />
             </svg>
